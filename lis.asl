@@ -1,7 +1,5 @@
 state("LifeIsStrange") 
 {
-    // 0: not loading
-    // 1: loading
     bool loading_chapter : "LifeIsStrange.exe", 0x1234AB0;
     // 0/65: not moving/walking
     // 260: running
