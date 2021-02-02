@@ -1,15 +1,17 @@
 state("LifeIsStrange") 
 {
-    int scene : "LifeIsStrange.exe", 0x1208C5C;
+    // 0: not loading
+    // 1: loading
+    bool loading_chapter : "LifeIsStrange.exe", 0x1234AB0;
     // 0/65: not moving/walking
     // 260: running
     int running : "MSCTF.dll", 0xC1FD8;
-    // 2: unpaused
-    // -1: paused/tabbed
-    int paused : "LifeIsStrange.exe", 0x111B3C0;
-    // 0: ingame
-    // 22: menu
-    int playing : "LifeIsStrange.exe", 0x12352D4;
+    // 0 (int: -1): paused/tabbed
+    // 1 (int: 2): playing
+    bool playing : "LifeIsStrange.exe", 0x111B3C0;
+    // 0: not in menu
+    // 1 (int: 22): in menu
+    bool menu : "LifeIsStrange.exe", 0x12352D4;
 }
 
 init 
@@ -19,14 +21,14 @@ init
 
 start
 {
-    if (current.playing != 22 && old.scene != current.scene) {
+    if (!old.loading_chapter && current.loading_chapter) {
         return true;
     }
 }
 
 split
 {
-    if ((old.scene != current.scene) && !vars.locked) {
+    if (current.loading_chapter && !vars.locked) {
         vars.locked = true;
         return true;
     }
@@ -34,7 +36,7 @@ split
 
 reset
 {
-    if (old.playing == 0 && current.playing == 22) {
+    if (!old.menu && current.menu) {
         return true;
     }
 }
@@ -44,7 +46,7 @@ update
     if (current.running == 260) {
         vars.locked = false;
     }
-    if (current.paused != 2) {
+    if (!current.playing) {
         vars.locked = true;
     }
 }
