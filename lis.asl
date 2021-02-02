@@ -9,9 +9,9 @@ state("LifeIsStrange")
     // 0 (int: -1): paused/tabbed
     // 1 (int: 2): playing
     bool playing : "LifeIsStrange.exe", 0x111B3C0;
-    // 0: not in menu
-    // 1 (int: 22): in menu
-    bool menu : "LifeIsStrange.exe", 0x12352D4;
+    // 0: not in main menu
+    // 1 (int: 22): in main menu
+    bool main_menu : "LifeIsStrange.exe", 0x12352D4;
 }
 
 init 
@@ -36,7 +36,7 @@ split
 
 reset
 {
-    if (!old.menu && current.menu) {
+    if (!old.main_menu && current.main_menu) {
         return true;
     }
 }
