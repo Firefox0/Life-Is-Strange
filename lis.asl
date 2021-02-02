@@ -7,6 +7,9 @@ state("LifeIsStrange")
     // 2: unpaused
     // -1: paused/tabbed
     int paused : "LifeIsStrange.exe", 0x111B3C0;
+    // 0: ingame
+    // 22: menu
+    int playing : "LifeIsStrange.exe", 0x12352D4;
 }
 
 init 
@@ -16,13 +19,22 @@ init
 
 start
 {
-    return old.scene != current.scene;
+    if (current.playing != 22 && old.scene != current.scene) {
+        return true;
+    }
 }
 
 split
 {
     if ((old.scene != current.scene) && !vars.locked) {
         vars.locked = true;
+        return true;
+    }
+}
+
+reset
+{
+    if (old.playing == 0 && current.playing == 22) {
         return true;
     }
 }
